@@ -3,6 +3,21 @@
 
     <string name="app_name">App1</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title">Profile</string>
+    <string name="name">Name:</string>
+    <string name="breed">Breed:</string>
+    <string name="gender">Gender:</string>
+    <string name="photo">Photo:</string>
+    <string-array name="breed">
+        <item>Labrador</item>
+        <item>Collie</item>
+        <item>Yorkshire</item>
+        <item>Pit bull</item>
+        <item>Doberman</item>
+        <item>Huskey</item>
+        <item>Chow chow</item>
+        <item>Bulldog</item>  
+        <item>Beagle</item>      
+    </string-array>
 
 </resources>
