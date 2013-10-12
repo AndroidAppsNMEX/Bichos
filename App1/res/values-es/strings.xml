@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="action_settings">Ajustes</string>
+    <string name="app_name">App1</string>
+    <string name="breed">Raza:</string>
+    <string name="gender">Sexo:</string>
+    <string name="name">Nombre:</string>
+    <string name="photo">Foto:</string>
+
+</resources>
