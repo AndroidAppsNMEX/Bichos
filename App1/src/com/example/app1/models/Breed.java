@@ -22,7 +22,7 @@ public class Breed {
 		return breedDes;
 	}
 
-	private void setBreedDes(String breedDes) {
+	public void setBreedDes(String breedDes) {
 		this.breedDes = breedDes;
 	}
 
