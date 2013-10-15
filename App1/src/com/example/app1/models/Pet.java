@@ -2,89 +2,89 @@ package com.example.app1.models;
 
 public class Pet {
 
-	private Integer petID;
-	private Integer ownerID;
-	private Integer breedID;
-	private String petNick;
-	private String petName;
-	private Gender petGender;
-	private Integer petAge;
-	private String petDesc;
-	private String petPathPhoto;
+	public Integer petID;
+	public Integer ownerID;
+	public Integer breedID;
+	public String petNick;
+	public String petName;
+	public Gender petGender;
+	public Integer petAge;
+	public String petDesc;
+	public String petPathPhoto;
 
 	public Pet() {
 
 	}
 
-	private Integer getPetID() {
+	public Integer getPetID() {
 		return petID;
 	}
 
-	private void setPetID(Integer petID) {
+	public void setPetID(Integer petID) {
 		this.petID = petID;
 	}
 
-	private Integer getOwnerID() {
+	public Integer getOwnerID() {
 		return ownerID;
 	}
 
-	private void setOwnerID(Integer ownerID) {
+	public void setOwnerID(Integer ownerID) {
 		this.ownerID = ownerID;
 	}
 
-	private Integer getBreedID() {
+	public Integer getBreedID() {
 		return breedID;
 	}
 
-	private void setBreedID(Integer breedID) {
+	public void setBreedID(Integer breedID) {
 		this.breedID = breedID;
 	}
 
-	private String getPetNick() {
+	public String getPetNick() {
 		return petNick;
 	}
 
-	private void setPetNick(String petNick) {
+	public void setPetNick(String petNick) {
 		this.petNick = petNick;
 	}
 
-	private String getPetName() {
+	public String getPetName() {
 		return petName;
 	}
 
-	private void setPetName(String petName) {
+	public void setPetName(String petName) {
 		this.petName = petName;
 	}
 
-	private Gender getPetGender() {
+	public Gender getPetGender() {
 		return petGender;
 	}
 
-	private void setPetGender(Gender petGender) {
+	public void setPetGender(Gender petGender) {
 		this.petGender = petGender;
 	}
 
-	private Integer getPetAge() {
+	public Integer getPetAge() {
 		return petAge;
 	}
 
-	private void setPetAge(Integer petAge) {
+	public void setPetAge(Integer petAge) {
 		this.petAge = petAge;
 	}
 
-	private String getPetDesc() {
+	public String getPetDesc() {
 		return petDesc;
 	}
 
-	private void setPetDesc(String petDesc) {
+	public void setPetDesc(String petDesc) {
 		this.petDesc = petDesc;
 	}
 
-	private String getPetPathPhoto() {
+	public String getPetPathPhoto() {
 		return petPathPhoto;
 	}
 
-	private void setPetPathPhoto(String petPathPhoto) {
+	public void setPetPathPhoto(String petPathPhoto) {
 		this.petPathPhoto = petPathPhoto;
 	}
 

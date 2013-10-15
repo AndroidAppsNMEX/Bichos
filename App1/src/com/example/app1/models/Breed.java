@@ -10,15 +10,15 @@ public class Breed {
 		setBreedDes("");
 	}
 
-	private Integer getBreedID() {
+	public Integer getBreedID() {
 		return breedID;
 	}
 
-	private void setBreedID(Integer breedID) {
+	public void setBreedID(Integer breedID) {
 		this.breedID = breedID;
 	}
 
-	private String getBreedDes() {
+	public String getBreedDes() {
 		return breedDes;
 	}
 
@@ -33,7 +33,7 @@ public class Breed {
 	public boolean equals(Object o) {
 		boolean equals = false;
 
-		if (o instanceof User && ((Breed) o).getBreedID() == getBreedID()) {
+		if (o instanceof Owner && ((Breed) o).getBreedID() == getBreedID()) {
 			equals = true;
 		}
 		return equals;
