@@ -19,5 +19,11 @@
         <item>Bulldog</item>  
         <item>Beagle</item>      
     </string-array>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="description">About me</string>
+    <string name="idog">iDog</string>
+    <string name="submit">Submit</string>
+    <string name="age">Age</string>
 
 </resources>

@@ -8,70 +8,162 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/title" />
-
-    <TextView
-        android:id="@+id/textView2"
+    <RadioGroup
+        android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="44dp"
-        android:text="@string/name" />
+        android:layout_below="@+id/TextView02"
+        android:layout_marginLeft="12dp" >
+    </RadioGroup>
 
     <TextView
-        android:id="@+id/TextView01"
+        android:id="@+id/TextView02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_below="@+id/textView2"
-        android:layout_marginTop="18dp"
-        android:text="@string/breed"  />
+        android:layout_alignBaseline="@+id/radio1"
+        android:layout_alignBottom="@+id/radio1"
+        android:layout_alignLeft="@+id/radioGroup1"
+        android:text="@string/gender" />
 
     <EditText
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/TextView01"
-        android:layout_marginLeft="11dp"
-        android:layout_toRightOf="@+id/TextView02"
+        android:layout_alignBaseline="@+id/textView2"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_marginLeft="31dp"
+        android:layout_toRightOf="@+id/TextView01"
         android:ems="10"
-        android:inputType="textPersonName" >
-
-        <requestFocus />
-    </EditText>
+        android:inputType="textPersonName"
+        android:text="My name is..." />
 
     <Spinner
         android:id="@+id/spinner1"
         style="@style/AppTheme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextView01"
         android:layout_alignBottom="@+id/TextView01"
         android:layout_alignLeft="@+id/editText1"
         android:entries="@array/breed"
         tools:listitem="@android:layout/simple_spinner_item" />
 
-    <TextView
-        android:id="@+id/TextView02"
+    <RadioButton
+        android:id="@+id/radio1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/TextView01"
-        android:layout_below="@+id/TextView01"
-        android:layout_marginTop="24dp"
-        android:text="@string/gender" />
+        android:layout_alignLeft="@+id/spinner1"
+        android:layout_centerVertical="true"
+        android:text="@string/female"  />
+
+    <RadioButton
+        android:id="@+id/radio0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/radioGroup1"
+        android:layout_marginLeft="11dp"
+        android:layout_toRightOf="@+id/radio1"
+        android:checked="true"
+        android:text="@string/male" />
 
     <TextView
-        android:id="@+id/TextView03"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/quickContactBadge1"
+        android:layout_marginTop="68dp"
+        android:layout_toLeftOf="@+id/editText1"
+        android:text="@string/name" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/radio1"
         android:layout_alignLeft="@+id/TextView02"
-        android:layout_below="@+id/TextView02"
-        android:layout_marginTop="23dp"
-        android:text="@string/photo" />
+        android:layout_marginBottom="25dp"
+        android:text="@string/breed" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/radioGroup1"
+        android:layout_below="@+id/radioGroup1"
+        android:layout_marginTop="16dp"
+        android:text="@string/age" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/radio1"
+        android:layout_below="@+id/radioGroup1"
+        android:ems="10"
+        android:inputType="number" />
+
+        <requestFocus />
+
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_below="@+id/editText2"
+        android:layout_marginTop="30dp"
+        android:text="@string/description" />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignLeft="@+id/editText2"
+        android:ems="10"
+        android:inputType="textLongMessage|textMultiLine"
+        android:text="Tell me about you..." />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:text="@string/title" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/textView3"
+        android:layout_alignTop="@+id/quickContactBadge1"
+        android:layout_marginTop="17dp"
+        android:text="@string/idog" />
+
+    <EditText
+        android:id="@+id/editText4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView5"
+        android:ems="10"
+        android:inputType="text" />
+
+    <QuickContactBadge
+        android:id="@+id/quickContactBadge1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/editText1"
+        android:layout_below="@+id/textView1" />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="53dp"
+        android:text="@string/submit" />
 
 </RelativeLayout>
