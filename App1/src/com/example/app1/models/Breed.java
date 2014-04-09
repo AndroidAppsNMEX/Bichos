@@ -9,6 +9,11 @@ public class Breed {
 		setBreedID(0);
 		setBreedDes("");
 	}
+	
+	public Breed(String id, String des){
+		setBreedID(Integer.parseInt(id));
+		setBreedDes(des);
+	}
 
 	public Integer getBreedID() {
 		return breedID;
@@ -27,7 +32,7 @@ public class Breed {
 	}
 
 	public String toString() {
-		return getBreedID() + ":[" + getBreedDes() + "]";
+		return getBreedDes();
 	}
 
 	public boolean equals(Object o) {
