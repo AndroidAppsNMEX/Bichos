@@ -9,7 +9,7 @@ public class Owner {
 	private String ownerPassword;
 
 	public Owner() {
-		setOwnerID(Integer.parseInt(""));
+		setOwnerID(Integer.parseInt("0"));
 		setOwnerName("");
 		setOwnerSurName("");
 		setOwnerMail("");

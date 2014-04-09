@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.example.app1.models.Breed;
 import com.example.app1.models.Pet;
 
-public class MainActivity extends Activity {
+public class NewPetActivity extends Activity {
 
 	private EditText textName;
 	private EditText textAge;
@@ -55,7 +55,7 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.new_pet);
 
 		Bundle bundle = getIntent().getExtras();
 		

@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,6 +20,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.app1.models.Owner;
 
 public class NewUserActivity extends Activity {
 
@@ -28,12 +31,14 @@ public class NewUserActivity extends Activity {
 	private Button bSubmit;
 	private static final String SOAP_ACTION = "http://services.web.org/";
 	private static final String METHOD_NAME_NUSER = "newUser";
+	private static final String METHOD_NAME_USER = "findOwnerByNick";
 	private static final String NAMESPACE = "http://services.web.org/";
 	private static final String URL = "http://192.168.43.241:8080/DogMeIn/DogMeInWeb?wsdl";
 	private Thread webThread;
 	private Handler h;
 	private ProgressDialog prDialog;
 	private Context mContext;
+	private Owner owner;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,7 +49,7 @@ public class NewUserActivity extends Activity {
 		textRPass = (EditText) this.findViewById(R.id.newUserRPassword);
 		bSubmit = (Button) this.findViewById(R.id.addUser);
 		mContext = this.getApplicationContext();
-		
+
 		bSubmit.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -58,7 +63,8 @@ public class NewUserActivity extends Activity {
 			public void handleMessage(Message msg) {
 				prDialog.dismiss();
 				if (msg.what == 0) {
-					// Todo OK
+					//Show the pet's Activity.
+					executePetActivity();
 				} else {
 					// Error al insertar.
 				}
@@ -80,12 +86,15 @@ public class NewUserActivity extends Activity {
 			webThread = new Thread(new Runnable() {
 				public void run() {
 					int result = insertUser(user, pass);
+					if (result == 0) {
+						owner = recoverOwner(user);
+					}
 					h.sendEmptyMessage(result);
 				}
 			});
 
-			prDialog = ProgressDialog.show(NewUserActivity.this, "Connecting...",
-					"Adding user: " + user, true, false);
+			prDialog = ProgressDialog.show(NewUserActivity.this,
+					"Connecting...", "Adding user: " + user, true, false);
 			webThread.start();
 		}
 	}
@@ -115,10 +124,72 @@ public class NewUserActivity extends Activity {
 			resultado = -1;
 		} catch (XmlPullParserException e) {
 			resultado = -1;
-		} catch (ClassCastException e){
+		} catch (ClassCastException e) {
 			resultado = -1;
-		} 
+		}
 		return resultado;
+	}
+
+	private Owner recoverOwner(String user) {
+		Owner owner = new Owner();
+		try {
+			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_USER);
+
+			request.addProperty("nickName", user);
+			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);
+			sobre.dotNet = false;
+			sobre.setOutputSoapObject(request);
+
+			HttpTransportSE transporte = new HttpTransportSE(URL);
+			// Llamada
+			transporte.call(SOAP_ACTION + METHOD_NAME_USER, sobre);
+
+			// Resultado
+			SoapObject resultRequestSOAP = (SoapObject) sobre.bodyIn;
+			// Parse del XML
+			owner = parseOwner(resultRequestSOAP);
+		} catch (HttpResponseException e) {
+			owner.setOwnerID(-1);
+		} catch (IOException e) {
+			owner.setOwnerID(-1);
+		} catch (XmlPullParserException e) {
+			owner.setOwnerID(-1);
+		} catch (ClassCastException e) {
+			owner.setOwnerID(-1);
+		}
+		return owner;
+	}
+
+	private Owner parseOwner(SoapObject requestSOAP) {
+		SoapObject root = (SoapObject) requestSOAP.getProperty("return");
+		Owner owner = new Owner();
+
+		String userName = "";
+		Integer userId = -3;
+		String password = "";
+		for (int i = 0; i < root.getPropertyCount(); i++) {
+			Object property = root.getProperty(i);
+
+			if (i == 1) {
+				userName = property.toString();
+			} else if (i == 0) {
+				userId = Integer.parseInt(property.toString());
+			} else {
+				password = property.toString();
+			}
+
+		}
+		owner.setOwnerID(userId);
+		owner.setOwnerName(userName);
+		owner.setOwnerPassword(password);
+		return owner;
+	}
+	
+	private void executePetActivity(){
+		Intent i = new Intent(this, NewPetActivity.class);
+		i.putExtra("owner", owner.getOwnerID());
+		startActivity(i);
 	}
 
 }
