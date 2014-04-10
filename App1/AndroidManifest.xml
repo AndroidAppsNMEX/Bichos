@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.example.app1.LoginActivity"
+            android:name="com.example.dogMeIn.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +24,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.app1.NewUserActivity"></activity>
+        <activity android:name="com.example.dogMeIn.NewUserActivity"></activity>
+        <activity android:name="com.example.dogMeIn.NewPetActivity"></activity>
+        <activity android:name="com.example.dogMeIn.MainMenu"></activity>
     </application>
 
 </manifest>

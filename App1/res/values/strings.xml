@@ -28,9 +28,12 @@
     <string name="password">Password:</string>
     <string name="rePassword">Re-Password:</string>
     <string name="user_profile">User Profile</string>
-    <string name="myNameIs">My name is...</string>
-    <string name="tellMe">Tell me about you...</string>
+    <string name="myNameIs">My name is&#8230;</string>
+    <string name="tellMe">Tell me about you&#8230;</string>
     <string name="login">Login</string>
     <string name="user">User:</string>
+    <string name="newPet">New Pet</string>
+    <string name="map">Map</string>
+    <string name="myProfile">My Profile</string>
 
 </resources>

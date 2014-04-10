@@ -1,4 +1,6 @@
-package com.example.app1;
+package com.example.dogMeIn;
+
+import com.example.app1.R;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,6 +19,7 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.login);
 		
 		bNewUser = (Button) this.findViewById(R.id.loginAddUser);
+		bLogin = (Button) this.findViewById(R.id.login);
 		
 		bNewUser.setOnClickListener(new OnClickListener() {
 			
@@ -25,10 +28,26 @@ public class LoginActivity extends Activity {
 				onClickNewUser();
 			}
 		});
+		
+		bLogin.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onClickLogin();
+			}
+		});
+		
+		
 	}
 	
 	private void onClickNewUser(){
 		Intent i = new Intent(this, NewUserActivity.class);
+		startActivity(i);
+	}
+	
+	private void onClickLogin(){
+		Intent i = new Intent(this, NewPetActivity.class);
+		i.putExtra("ownerID", 0);
 		startActivity(i);
 	}
 }

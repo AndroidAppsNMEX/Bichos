@@ -1,4 +1,4 @@
-package com.example.app1;
+package com.example.dogMeIn;
 
 import java.io.IOException;
 
@@ -21,6 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.app1.R;
 import com.example.app1.models.Owner;
 
 public class NewUserActivity extends Activity {
@@ -188,7 +189,7 @@ public class NewUserActivity extends Activity {
 	
 	private void executePetActivity(){
 		Intent i = new Intent(this, NewPetActivity.class);
-		i.putExtra("owner", owner.getOwnerID());
+		i.putExtra("ownerID", owner.getOwnerID());
 		startActivity(i);
 	}
 

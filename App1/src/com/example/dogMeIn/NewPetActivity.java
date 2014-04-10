@@ -1,9 +1,7 @@
-package com.example.app1;
+package com.example.dogMeIn;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
@@ -15,7 +13,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,6 +22,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.app1.R;
 import com.example.app1.models.Breed;
 import com.example.app1.models.Pet;
 
@@ -36,9 +34,6 @@ public class NewPetActivity extends Activity {
 	private List<Breed> breedList;
 	private ArrayAdapter<Breed> breedSpAdapter;
 	private Button bSubmit;
-	private final int DIALOG_BAD_DB = 1;
-	private final int DIALOG_EXIT = 2;
-	private final int DIALOG_CORRECT = 3;
 	private final int METHOD_OPT_SUBMIT = 0;
 	private final int METHOD_OPT_BREED = 1;
 	private Context mContext;
@@ -58,10 +53,10 @@ public class NewPetActivity extends Activity {
 		setContentView(R.layout.new_pet);
 
 		Bundle bundle = getIntent().getExtras();
-		
+
 		int ownerId = bundle.getInt("ownerID");
 		ownerID = ownerId;
-		
+
 		textName = (EditText) this.findViewById(R.id.loginUserName);
 		textAge = (EditText) this.findViewById(R.id.newUserPassword);
 		spinBreed = (Spinner) this.findViewById(R.id.spinner1);
@@ -72,7 +67,7 @@ public class NewPetActivity extends Activity {
 			public void onClick(View view) {
 				Toast.makeText(mContext, "onCLick button.", Toast.LENGTH_LONG)
 						.show();
-				try{
+				try {
 					pet = extractPet();
 					webThread = new Thread(new Runnable() {
 						public void run() {
@@ -84,15 +79,15 @@ public class NewPetActivity extends Activity {
 							}
 						}
 					});
-					
+
 					webThread.start();
 					webThread.join();
-				} catch(RuntimeException e){
+				} catch (RuntimeException e) {
 					Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG)
-					.show();
-				} catch(InterruptedException e){
-					Toast.makeText(mContext, "Impossible connect to server", Toast.LENGTH_LONG)
-					.show();
+							.show();
+				} catch (InterruptedException e) {
+					Toast.makeText(mContext, "Impossible connect to server",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -168,26 +163,26 @@ public class NewPetActivity extends Activity {
 		try {
 			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_BREED);
 
-			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 					SoapEnvelope.VER11);
-			sobre.dotNet = false;
-			sobre.setOutputSoapObject(request);
-
+			envelope.dotNet = false;
+			envelope.setOutputSoapObject(request);
+			
 			HttpTransportSE transporte = new HttpTransportSE(URL);
 			// Llamada
-			transporte.call(SOAP_ACTION + METHOD_NAME_BREED, sobre);
+			transporte.call(SOAP_ACTION + METHOD_NAME_BREED, envelope);
 
-			sobre.toString();
 			// Resultado
-			Vector<Object> resultado = (Vector<Object>) sobre.getResponse();
+			SoapObject requestSOAP = (SoapObject) envelope.bodyIn;
 
-			if (resultado == null) {
+			if (requestSOAP == null) {
 				result = -1;
 			} else {
-				result = crearLista(resultado);
+				result = crearLista(requestSOAP);
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			result = -1;
 		}
 		return result;
@@ -198,16 +193,16 @@ public class NewPetActivity extends Activity {
 		try {
 			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_SUBMIT);
 
-		      request.addProperty("breedID", pet.getBreedID());
-		      request.addProperty("ownerID", pet.getOwnerID());
-		      request.addProperty("petAge", pet.getPetAge());
-		      request.addProperty("petDesc", pet.getPetDesc());
-		      request.addProperty("petGender", pet.getPetGender().toString());
-		      request.addProperty("petID", pet.getPetID());
-		      request.addProperty("petName", pet.getPetName());
-		      request.addProperty("petNick", pet.getPetNick());
-		      request.addProperty("petPathPhoto", pet.getPetPathPhoto());
-		      
+			request.addProperty("breedID", pet.getBreedID());
+			request.addProperty("ownerID", pet.getOwnerID());
+			request.addProperty("petAge", pet.getPetAge());
+			request.addProperty("petDesc", pet.getPetDesc());
+			request.addProperty("petGender", pet.getPetGender().toString());
+			request.addProperty("petID", pet.getPetID());
+			request.addProperty("petName", pet.getPetName());
+			request.addProperty("petNick", pet.getPetNick());
+			request.addProperty("petPathPhoto", pet.getPetPathPhoto());
+
 			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
 					SoapEnvelope.VER11);
 			sobre.dotNet = false;
@@ -224,45 +219,25 @@ public class NewPetActivity extends Activity {
 		return result;
 	}
 
-	private int crearLista(Vector<Object> vector) {
-		/*int result = 0;
+	private int crearLista(SoapObject requestSOAP) {
+		int result = 0;
 		breedList = new ArrayList<Breed>();
 		try {
-			for (int i = 0; i < vector.size(); i++) {
-				Log.i("Vector [" + i + "]", "V: " + vector.get(i).toString());
-				String element = vector.get(i).toString();
-
-				String preElement = element.substring(8);
-				Log.i("Vector [" + i + "]", "V: " + preElement);
-
-				String sufElement = preElement.substring(0,
-						preElement.length() - 3);
-				Log.i("Vector [" + i + "]", "V: " + sufElement);
-
-				StringTokenizer tokens = new StringTokenizer(sufElement, ";");
-
-				String id = "";
-				String des = "";
-
-				int tok = 0;
-				while (tokens.hasMoreTokens()) {
-					String token = tokens.nextToken().trim();
-					int posEqual = token.indexOf("=");
-					Log.i("Igual", "int: " + posEqual + "");
-					if (tok == 0) {
-						des = token.substring(posEqual + 1);
-					} else {
-						id = token.substring(posEqual + 1);
-					}
-					tok++;
-				}
-				breedList.add(new Breed(id, des));
+			for(int i=0; i< requestSOAP.getPropertyCount(); i++){
+				SoapObject breed = (SoapObject) requestSOAP.getProperty(i);
+				
+				Breed b = new Breed();
+				b.setBreedID(Integer.parseInt(breed.getPropertyAsString("breedID")));
+				b.setBreedDes(breed.getPropertyAsString("breedDes"));
+				
+				breedList.add(b);
 			}
+			
+			
 		} catch (Exception e) {
-			result = -2;
+			e.printStackTrace();
 		}
-		return result;*/
-		return 0;
+		return result;
 	}
 
 	public Pet extractPet() {
