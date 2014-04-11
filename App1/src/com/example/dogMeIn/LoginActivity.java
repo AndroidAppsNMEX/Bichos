@@ -1,6 +1,6 @@
 package com.example.dogMeIn;
 
-import com.example.app1.R;
+import com.example.dogMeIn.R;
 
 import android.app.Activity;
 import android.content.Intent;

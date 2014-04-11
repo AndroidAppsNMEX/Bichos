@@ -1,4 +1,4 @@
-package com.example.app1.models;
+package com.example.dogMeIn.models;
 
 public class Owner {
 
@@ -10,6 +10,15 @@ public class Owner {
 
 	public Owner() {
 		setOwnerID(Integer.parseInt("0"));
+		setOwnerName("");
+		setOwnerSurName("");
+		setOwnerMail("");
+		setOwnerPassword("");
+
+	}
+	
+	public Owner(String ID) {
+		setOwnerID(Integer.parseInt(ID));
 		setOwnerName("");
 		setOwnerSurName("");
 		setOwnerMail("");

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/BackGroundBule" >
+
+    <Button
+        android:id="@+id/bNewPet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="60dp"
+        android:text="@string/newPet" />
+
+    <Button
+        android:id="@+id/bmyProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/bNewPet"
+        android:layout_alignBottom="@+id/bNewPet"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="44dp"
+        android:text="@string/myProfile" />
+
+    <Button
+        android:id="@+id/bMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/map" />
+
+</RelativeLayout>

@@ -1,4 +1,4 @@
-package com.example.app1.models;
+package com.example.dogMeIn.models;
 
 import java.sql.Date;
 

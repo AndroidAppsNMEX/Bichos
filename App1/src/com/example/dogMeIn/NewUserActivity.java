@@ -21,8 +21,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.app1.R;
-import com.example.app1.models.Owner;
+import com.example.dogMeIn.R;
+import com.example.dogMeIn.models.Owner;
 
 public class NewUserActivity extends Activity {
 

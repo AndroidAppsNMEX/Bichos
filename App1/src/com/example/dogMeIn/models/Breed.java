@@ -1,4 +1,4 @@
-package com.example.app1.models;
+package com.example.dogMeIn.models;
 
 public class Breed {
 

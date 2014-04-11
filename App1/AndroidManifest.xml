@@ -26,7 +26,8 @@
         </activity>
         <activity android:name="com.example.dogMeIn.NewUserActivity"></activity>
         <activity android:name="com.example.dogMeIn.NewPetActivity"></activity>
-        <activity android:name="com.example.dogMeIn.MainMenu"></activity>
+        <activity android:name="com.example.dogMeIn.MainMenuActivity"></activity>
+        <provider android:authorities="com.example.app1.db.DogMeInProvider" android:name=".db.DogMeInProvider"></provider>
     </application>
 
 </manifest>
