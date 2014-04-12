@@ -9,10 +9,16 @@ import org.ksoap2.transport.HttpResponseException;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,9 +27,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.dogMeIn.R;
+import com.example.dogMeIn.db.DogMeInDatabase;
+import com.example.dogMeIn.db.DogMeInProvider;
 import com.example.dogMeIn.models.Owner;
 
+@SuppressLint("HandlerLeak")
 public class NewUserActivity extends Activity {
 
 	private EditText textUser;
@@ -35,6 +43,8 @@ public class NewUserActivity extends Activity {
 	private static final String METHOD_NAME_USER = "findOwnerByNick";
 	private static final String NAMESPACE = "http://services.web.org/";
 	private static final String URL = "http://192.168.43.241:8080/DogMeIn/DogMeInWeb?wsdl";
+	private static final int DIALOG_ERROR_INSERT = 0;
+	private static final int DIALOG_OK_INSERT = 1;
 	private Thread webThread;
 	private Handler h;
 	private ProgressDialog prDialog;
@@ -49,7 +59,7 @@ public class NewUserActivity extends Activity {
 		textPass = (EditText) this.findViewById(R.id.newUserPassword);
 		textRPass = (EditText) this.findViewById(R.id.newUserRPassword);
 		bSubmit = (Button) this.findViewById(R.id.addUser);
-		mContext = this.getApplicationContext();
+		mContext = NewUserActivity.this;
 
 		bSubmit.setOnClickListener(new OnClickListener() {
 
@@ -64,10 +74,12 @@ public class NewUserActivity extends Activity {
 			public void handleMessage(Message msg) {
 				prDialog.dismiss();
 				if (msg.what == 0) {
-					//Show the pet's Activity.
-					executePetActivity();
+					// Show the main menu's Activity.
+					//executeMainMenuActivity();
+					onCreateDialog(DIALOG_OK_INSERT).show();
 				} else {
 					// Error al insertar.
+					onCreateDialog(DIALOG_ERROR_INSERT).show();
 				}
 			}
 		};
@@ -86,9 +98,10 @@ public class NewUserActivity extends Activity {
 		} else {
 			webThread = new Thread(new Runnable() {
 				public void run() {
-					int result = insertUser(user, pass);
+					int result = insertUserWS(user, pass);
 					if (result == 0) {
 						owner = recoverOwner(user);
+						insertUserSQLite(owner);
 					}
 					h.sendEmptyMessage(result);
 				}
@@ -100,7 +113,7 @@ public class NewUserActivity extends Activity {
 		}
 	}
 
-	private int insertUser(String user, String pass) {
+	private int insertUserWS(String user, String pass) {
 		int resultado = 0;
 		try {
 			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_NUSER);
@@ -129,6 +142,20 @@ public class NewUserActivity extends Activity {
 			resultado = -1;
 		}
 		return resultado;
+	}
+
+	private int insertUserSQLite(Owner owner) {
+		int result = 0;
+		ContentValues values = new ContentValues();
+		values.put(DogMeInDatabase.COL_OWNER[0], owner.getOwnerID());
+		values.put(DogMeInDatabase.COL_OWNER[1], owner.getOwnerName());
+		values.put(DogMeInDatabase.COL_OWNER[2], owner.getOwnerPassword());
+		Uri uri = getContentResolver().insert(
+				DogMeInProvider.CONTENT_URI_OWNER, values);
+		if (uri == null) {
+			result = -1;
+		}
+		return result;
 	}
 
 	private Owner recoverOwner(String user) {
@@ -186,11 +213,51 @@ public class NewUserActivity extends Activity {
 		owner.setOwnerPassword(password);
 		return owner;
 	}
-	
-	private void executePetActivity(){
-		Intent i = new Intent(this, NewPetActivity.class);
+
+	/*private void executeMainMenuActivity() {
+		Intent i = new Intent(this, MainMenuActivity.class);
 		i.putExtra("ownerID", owner.getOwnerID());
 		startActivity(i);
+	}*/
+
+	protected Dialog onCreateDialog(int id) {
+		AlertDialog.Builder builder;
+		builder = new AlertDialog.Builder(mContext);
+		switch (id) {
+		case DIALOG_OK_INSERT:	
+			builder.setMessage("Owner created.")
+					.setCancelable(false)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									Intent i = new Intent(mContext,
+											MainMenuActivity.class);
+									i.putExtra("ownerID", owner.getOwnerID());
+									startActivity(i);
+								}
+							});
+			break;
+		case DIALOG_ERROR_INSERT:
+			builder.setMessage("Error to create the owner.")
+					.setCancelable(false)
+					.setPositiveButton("OK",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+									dialog.cancel();
+								}
+							});
+			break;
+		}
+
+		return builder.create();
 	}
 
 }

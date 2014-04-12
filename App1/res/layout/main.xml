@@ -8,10 +8,4 @@
     android:orientation="vertical"
     tools:context="com.example.dogMeIn.MainActivity" >
 
-    <ProgressBar
-        android:id="@+id/prADialog"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="169dp"
-        android:layout_height="728dp" />
-
 </LinearLayout>

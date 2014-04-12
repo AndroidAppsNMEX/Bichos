@@ -1,4 +1,4 @@
-package com.example.app1.db;
+package com.example.dogMeIn.db;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -12,7 +12,7 @@ import com.example.dogMeIn.models.Owner;
 public class DogMeInProvider extends ContentProvider {
 
 	String TAG = "DogMeInProvider";
-	public static String AUTHORITY = "com.example.app1.db.DogMeInProvider";
+	public static String AUTHORITY = "com.example.dogMeIn.db.DogMeInProvider";
 	public static final Uri CONTENT_URI_OWNER = Uri.parse("content://"
 			+ AUTHORITY + "/OWNER");
 
@@ -22,7 +22,7 @@ public class DogMeInProvider extends ContentProvider {
 			+ "/vnd.com.example.app1";
 
 	private static final int GET_OWNER = 0;
-	private static final int CHECK_OWNER = 1;
+	private static final int CHECK_INSERT_UPDATE_OWNER = 1;
 
 	private DogMeInDatabase mDogMeIn;
 
@@ -32,7 +32,7 @@ public class DogMeInProvider extends ContentProvider {
 		UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
 		matcher.addURI(AUTHORITY, "OWNER/#", GET_OWNER);
-		matcher.addURI(AUTHORITY, "OWNER", CHECK_OWNER);
+		matcher.addURI(AUTHORITY, "OWNER", CHECK_INSERT_UPDATE_OWNER);
 		return matcher;
 	}
 
@@ -47,7 +47,7 @@ public class DogMeInProvider extends ContentProvider {
 		switch (sURIMatcher.match(uri)) {
 		case GET_OWNER:
 			return SR_MIME_TYPE;
-		case CHECK_OWNER:
+		case CHECK_INSERT_UPDATE_OWNER:
 			return MR_MIME_TYPE;
 		default:
 			throw new IllegalArgumentException("Unknown URL " + uri);
@@ -57,8 +57,14 @@ public class DogMeInProvider extends ContentProvider {
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		// TODO Auto-generated method stub
-		switch(sURIMatcher.match(uri)){
-			
+		switch (sURIMatcher.match(uri)) {
+		case CHECK_INSERT_UPDATE_OWNER:
+			Owner owner = new Owner();
+			owner.setOwnerID(values.getAsInteger(DogMeInDatabase.COL_OWNER[0]));
+			owner.setOwnerName(values.getAsString(DogMeInDatabase.COL_OWNER[1]));
+			owner.setOwnerPassword(values.getAsString(DogMeInDatabase.COL_OWNER[2]));
+			mDogMeIn.insertOwner(owner);
+			break;
 		}
 		return null;
 	}
@@ -76,10 +82,9 @@ public class DogMeInProvider extends ContentProvider {
 		// TODO Auto-generated method stub
 		switch (sURIMatcher.match(uri)) {
 		case GET_OWNER:
-			Owner o = new Owner(selectionArgs[0]);
-			return getOwner(o);
-		case CHECK_OWNER:
-			return checkOwner(uri);
+			return getOwner(uri);
+		case CHECK_INSERT_UPDATE_OWNER:
+			return checkOwner();
 		}
 		return null;
 	}
@@ -91,15 +96,15 @@ public class DogMeInProvider extends ContentProvider {
 		return 0;
 	}
 
-	private Cursor getOwner(Owner owner) {
-		String[] columns = DogMeInDatabase.COL_OWNER;
-		return mDogMeIn.getOwner(owner, columns);
-	}
-
-	private Cursor checkOwner(Uri uri) {
+	private Cursor getOwner(Uri uri) {
 		String id = uri.getLastPathSegment();
 		String[] columns = DogMeInDatabase.COL_OWNER;
-		return mDogMeIn.checkOwner(id, columns);
+		return mDogMeIn.getOwner(id, columns);
+	}
+
+	private Cursor checkOwner() {
+		String[] columns = DogMeInDatabase.COL_OWNER;
+		return mDogMeIn.checkOwner(columns);
 	}
 
 }
