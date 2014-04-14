@@ -1,6 +1,10 @@
-package com.example.dogMeIn;
+package com.example.dogMeIn.networking;
 
+import java.util.List;
+
+import com.example.dogMeIn.models.Breed;
 import com.example.dogMeIn.models.Owner;
+import com.example.dogMeIn.models.Pet;
 
 public interface ConnectionWS {
 
@@ -18,4 +22,10 @@ public interface ConnectionWS {
 	Owner recoverOwner(String user);
 	
 	Owner login(String userName, String password);
+	
+	int submit(Pet pet);
+	
+	int recoverBreed();
+	
+	List<Breed> getBreedList();
 }

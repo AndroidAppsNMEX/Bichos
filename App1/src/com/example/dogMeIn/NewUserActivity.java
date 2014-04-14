@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,9 +16,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.example.dogMeIn.db.DogMeInDatabase;
-import com.example.dogMeIn.db.DogMeInProvider;
+import com.example.dogMeIn.db.ConnectionSQLite;
+import com.example.dogMeIn.db.ConnectionSQLiteClass;
 import com.example.dogMeIn.models.Owner;
+import com.example.dogMeIn.networking.ConnectionWS;
+import com.example.dogMeIn.networking.ConnectionWSClass;
 
 @SuppressLint("HandlerLeak")
 public class NewUserActivity extends Activity {
@@ -37,6 +37,7 @@ public class NewUserActivity extends Activity {
 	private Context mContext;
 	private Owner owner;
 	private ConnectionWS connectionWS = new ConnectionWSClass();
+	private ConnectionSQLite connectionSQLite = new ConnectionSQLiteClass();
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,7 +89,7 @@ public class NewUserActivity extends Activity {
 					int result = connectionWS.insertUserWS(user, pass);
 					if (result == 0) {
 						owner = connectionWS.recoverOwner(user);
-						insertUserSQLite(owner);
+						result = connectionSQLite.insertUserSQLite(mContext, owner);
 					}
 					h.sendEmptyMessage(result);
 				}
@@ -98,20 +99,6 @@ public class NewUserActivity extends Activity {
 					"Connecting...", "Adding user: " + user, true, false);
 			webThread.start();
 		}
-	}
-
-	private int insertUserSQLite(Owner owner) {
-		int result = 0;
-		ContentValues values = new ContentValues();
-		values.put(DogMeInDatabase.COL_OWNER[0], owner.getOwnerID());
-		values.put(DogMeInDatabase.COL_OWNER[1], owner.getOwnerName());
-		values.put(DogMeInDatabase.COL_OWNER[2], owner.getOwnerPassword());
-		Uri uri = getContentResolver().insert(
-				DogMeInProvider.CONTENT_URI_OWNER, values);
-		if (uri == null) {
-			result = -1;
-		}
-		return result;
 	}
 
 	protected Dialog onCreateDialog(int id) {

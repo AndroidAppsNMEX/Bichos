@@ -7,8 +7,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-import com.example.dogMeIn.R;
-
 public class MainMenuActivity extends Activity {
 
 	private Integer ownerID;
@@ -70,7 +68,8 @@ public class MainMenuActivity extends Activity {
 	}
 
 	private void onClickMap() {
-		Intent i = new Intent();
+		Intent i = new Intent(this, ParkActivity.class);
 		i.putExtra("ownerID", ownerID);
+		startActivity(i);
 	}
 }

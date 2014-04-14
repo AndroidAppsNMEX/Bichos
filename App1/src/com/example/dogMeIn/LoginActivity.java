@@ -12,7 +12,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.dogMeIn.db.ConnectionSQLite;
+import com.example.dogMeIn.db.ConnectionSQLiteClass;
 import com.example.dogMeIn.models.Owner;
+import com.example.dogMeIn.networking.ConnectionWS;
+import com.example.dogMeIn.networking.ConnectionWSClass;
 
 public class LoginActivity extends Activity {
 
@@ -24,14 +29,17 @@ public class LoginActivity extends Activity {
 	private String userName;
 	private String password;
 	private ConnectionWS connectionWS = new ConnectionWSClass();
+	private ConnectionSQLite connectionSQLite = new ConnectionSQLiteClass();
 	private Thread webThread = new Thread(new Runnable() {
 
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
+			int result = 0;
 			connectionWS.login(userName, password);
 			if (owner.getOwnerID() > 0) {
-				hLogin.sendEmptyMessage(0);
+				result = connectionSQLite.insertUserSQLite(mContext, owner);
+				hLogin.sendEmptyMessage(result);
 			} else {
 				hLogin.sendEmptyMessage(owner.getOwnerID());
 			}
@@ -93,8 +101,7 @@ public class LoginActivity extends Activity {
 
 	private void onClickLogin() {
 		userName = textUserName.getText().toString();
-		password = textPassword.getText().toString();
-		
+		password = textPassword.getText().toString();	
 		prLogin = ProgressDialog.show(mContext, "Login...", "Login...");
 		webThread.start();
 	}

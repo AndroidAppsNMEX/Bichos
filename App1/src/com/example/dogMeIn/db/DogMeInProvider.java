@@ -57,16 +57,20 @@ public class DogMeInProvider extends ContentProvider {
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
 		// TODO Auto-generated method stub
+		long result = 0;
 		switch (sURIMatcher.match(uri)) {
 		case CHECK_INSERT_UPDATE_OWNER:
 			Owner owner = new Owner();
 			owner.setOwnerID(values.getAsInteger(DogMeInDatabase.COL_OWNER[0]));
 			owner.setOwnerName(values.getAsString(DogMeInDatabase.COL_OWNER[1]));
 			owner.setOwnerPassword(values.getAsString(DogMeInDatabase.COL_OWNER[2]));
-			mDogMeIn.insertOwner(owner);
+			result = mDogMeIn.insertOwner(owner);
 			break;
 		}
-		return null;
+		if(result < 0){
+			return null;
+		}
+		return uri;
 	}
 
 	@Override

@@ -1,13 +1,5 @@
 package com.example.dogMeIn;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpTransportSE;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -29,6 +21,8 @@ import android.widget.Toast;
 import com.example.dogMeIn.models.Breed;
 import com.example.dogMeIn.models.Gender;
 import com.example.dogMeIn.models.Pet;
+import com.example.dogMeIn.networking.ConnectionWS;
+import com.example.dogMeIn.networking.ConnectionWSClass;
 
 public class NewPetActivity extends Activity {
 
@@ -36,7 +30,6 @@ public class NewPetActivity extends Activity {
 	private EditText textAge;
 	private EditText textNick;
 	private Spinner spinBreed;
-	private List<Breed> breedList;
 	private ArrayAdapter<Breed> breedSpAdapter;
 	private Button bSubmit;
 	private RadioButton rbMale;
@@ -49,6 +42,7 @@ public class NewPetActivity extends Activity {
 	private Handler hSubmit;
 	private Pet pet;
 	private Integer ownerID;
+	private ConnectionWS connectionWS = new ConnectionWSClass();
 
 	@SuppressLint("HandlerLeak")
 	@Override
@@ -140,9 +134,9 @@ public class NewPetActivity extends Activity {
 		webThread.start();
 		try {
 			webThread.join();
-			if (breedList != null) {
+			if (connectionWS.getBreedList() != null) {
 				breedSpAdapter = new ArrayAdapter<Breed>(this,
-						android.R.layout.simple_spinner_item, breedList);
+						android.R.layout.simple_spinner_item, connectionWS.getBreedList());
 				breedSpAdapter
 						.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
 				spinBreed.setAdapter(breedSpAdapter);
@@ -168,98 +162,15 @@ public class NewPetActivity extends Activity {
 
 		switch (method) {
 		case METHOD_OPT_SUBMIT:
-			result = submit();
+			result = connectionWS.submit(pet);
 			break;
 		case METHOD_OPT_BREED:
-			result = recoverBreed();
+			result = connectionWS.recoverBreed();
 			break;
 		}
 
 		return result;
 
-	}
-
-	private int recoverBreed() {
-
-		int result = 0;
-		try {
-			SoapObject request = new SoapObject(ConnectionWS.NAMESPACE, ConnectionWS.METHOD_NAME_BREED);
-
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);
-			envelope.dotNet = false;
-			envelope.setOutputSoapObject(request);
-
-			HttpTransportSE transporte = new HttpTransportSE(ConnectionWS.URL);
-			// Llamada
-			transporte.call(ConnectionWS.SOAP_ACTION + ConnectionWS.METHOD_NAME_BREED, envelope);
-
-			// Resultado
-			SoapObject requestSOAP = (SoapObject) envelope.bodyIn;
-
-			if (requestSOAP == null) {
-				result = -1;
-			} else {
-				result = crearLista(requestSOAP);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			result = -1;
-		}
-		return result;
-	}
-
-	private int submit() {
-		int result = 0;
-		try {
-			SoapObject request = new SoapObject(ConnectionWS.NAMESPACE, ConnectionWS.METHOD_NAME_SUBMIT);
-			request.addProperty("breedID", pet.getBreedID());
-			request.addProperty("ownerID", pet.getOwnerID());
-			request.addProperty("petAge", pet.getPetAge());
-			request.addProperty("petDesc", pet.getPetDesc());
-			request.addProperty("petGender", pet.getPetGender().toString());
-			request.addProperty("petID", pet.getPetID());
-			request.addProperty("petName", pet.getPetName());
-			request.addProperty("petNick", pet.getPetNick());
-			request.addProperty("petPathPhoto", pet.getPetPathPhoto());
-
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);
-			envelope.dotNet = false;
-			envelope.setOutputSoapObject(request);
-
-			HttpTransportSE transporte = new HttpTransportSE(ConnectionWS.URL);
-			// Llamada
-			transporte.call(ConnectionWS.SOAP_ACTION + ConnectionWS.METHOD_NAME_SUBMIT, envelope);
-
-			result = Integer.parseInt(envelope.getResponse().toString());
-		} catch (Exception e) {
-			result = -1;
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	private int crearLista(SoapObject requestSOAP) {
-		int result = 0;
-		breedList = new ArrayList<Breed>();
-		try {
-			for (int i = 0; i < requestSOAP.getPropertyCount(); i++) {
-				SoapObject breed = (SoapObject) requestSOAP.getProperty(i);
-
-				Breed b = new Breed();
-				b.setBreedID(Integer.parseInt(breed
-						.getPropertyAsString("breedID")));
-				b.setBreedDes(breed.getPropertyAsString("breedDes"));
-
-				breedList.add(b);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
 	}
 
 	private Pet extractPet() {
