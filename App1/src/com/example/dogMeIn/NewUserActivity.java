@@ -1,14 +1,5 @@
 package com.example.dogMeIn;
 
-import java.io.IOException;
-
-import org.ksoap2.SoapEnvelope;
-import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapSerializationEnvelope;
-import org.ksoap2.transport.HttpResponseException;
-import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,11 +29,6 @@ public class NewUserActivity extends Activity {
 	private EditText textPass;
 	private EditText textRPass;
 	private Button bSubmit;
-	private static final String SOAP_ACTION = "http://services.web.org/";
-	private static final String METHOD_NAME_NUSER = "newUser";
-	private static final String METHOD_NAME_USER = "findOwnerByNick";
-	private static final String NAMESPACE = "http://services.web.org/";
-	private static final String URL = "http://192.168.43.241:8080/DogMeIn/DogMeInWeb?wsdl";
 	private static final int DIALOG_ERROR_INSERT = 0;
 	private static final int DIALOG_OK_INSERT = 1;
 	private Thread webThread;
@@ -50,6 +36,7 @@ public class NewUserActivity extends Activity {
 	private ProgressDialog prDialog;
 	private Context mContext;
 	private Owner owner;
+	private ConnectionWS connectionWS = new ConnectionWSClass();
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -75,7 +62,7 @@ public class NewUserActivity extends Activity {
 				prDialog.dismiss();
 				if (msg.what == 0) {
 					// Show the main menu's Activity.
-					//executeMainMenuActivity();
+					// executeMainMenuActivity();
 					onCreateDialog(DIALOG_OK_INSERT).show();
 				} else {
 					// Error al insertar.
@@ -98,9 +85,9 @@ public class NewUserActivity extends Activity {
 		} else {
 			webThread = new Thread(new Runnable() {
 				public void run() {
-					int result = insertUserWS(user, pass);
+					int result = connectionWS.insertUserWS(user, pass);
 					if (result == 0) {
-						owner = recoverOwner(user);
+						owner = connectionWS.recoverOwner(user);
 						insertUserSQLite(owner);
 					}
 					h.sendEmptyMessage(result);
@@ -111,37 +98,6 @@ public class NewUserActivity extends Activity {
 					"Connecting...", "Adding user: " + user, true, false);
 			webThread.start();
 		}
-	}
-
-	private int insertUserWS(String user, String pass) {
-		int resultado = 0;
-		try {
-			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_NUSER);
-
-			request.addProperty("userName", user);
-			request.addProperty("password", pass);
-
-			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);
-			sobre.dotNet = false;
-			sobre.setOutputSoapObject(request);
-
-			HttpTransportSE transporte = new HttpTransportSE(URL);
-			// Llamada
-			transporte.call(SOAP_ACTION + METHOD_NAME_NUSER, sobre);
-
-			// Resultado
-			resultado = Integer.parseInt(sobre.getResponse().toString());
-		} catch (HttpResponseException e) {
-			resultado = -1;
-		} catch (IOException e) {
-			resultado = -1;
-		} catch (XmlPullParserException e) {
-			resultado = -1;
-		} catch (ClassCastException e) {
-			resultado = -1;
-		}
-		return resultado;
 	}
 
 	private int insertUserSQLite(Owner owner) {
@@ -158,73 +114,11 @@ public class NewUserActivity extends Activity {
 		return result;
 	}
 
-	private Owner recoverOwner(String user) {
-		Owner owner = new Owner();
-		try {
-			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_USER);
-
-			request.addProperty("nickName", user);
-			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);
-			sobre.dotNet = false;
-			sobre.setOutputSoapObject(request);
-
-			HttpTransportSE transporte = new HttpTransportSE(URL);
-			// Llamada
-			transporte.call(SOAP_ACTION + METHOD_NAME_USER, sobre);
-
-			// Resultado
-			SoapObject resultRequestSOAP = (SoapObject) sobre.bodyIn;
-			// Parse del XML
-			owner = parseOwner(resultRequestSOAP);
-		} catch (HttpResponseException e) {
-			owner.setOwnerID(-1);
-		} catch (IOException e) {
-			owner.setOwnerID(-1);
-		} catch (XmlPullParserException e) {
-			owner.setOwnerID(-1);
-		} catch (ClassCastException e) {
-			owner.setOwnerID(-1);
-		}
-		return owner;
-	}
-
-	private Owner parseOwner(SoapObject requestSOAP) {
-		SoapObject root = (SoapObject) requestSOAP.getProperty("return");
-		Owner owner = new Owner();
-
-		String userName = "";
-		Integer userId = -3;
-		String password = "";
-		for (int i = 0; i < root.getPropertyCount(); i++) {
-			Object property = root.getProperty(i);
-
-			if (i == 1) {
-				userName = property.toString();
-			} else if (i == 0) {
-				userId = Integer.parseInt(property.toString());
-			} else {
-				password = property.toString();
-			}
-
-		}
-		owner.setOwnerID(userId);
-		owner.setOwnerName(userName);
-		owner.setOwnerPassword(password);
-		return owner;
-	}
-
-	/*private void executeMainMenuActivity() {
-		Intent i = new Intent(this, MainMenuActivity.class);
-		i.putExtra("ownerID", owner.getOwnerID());
-		startActivity(i);
-	}*/
-
 	protected Dialog onCreateDialog(int id) {
 		AlertDialog.Builder builder;
 		builder = new AlertDialog.Builder(mContext);
 		switch (id) {
-		case DIALOG_OK_INSERT:	
+		case DIALOG_OK_INSERT:
 			builder.setMessage("Owner created.")
 					.setCancelable(false)
 					.setPositiveButton("OK",

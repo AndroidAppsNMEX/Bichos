@@ -63,11 +63,12 @@ public class MainActivity extends Activity {
 	private int checkOwner() {
 		int result = 0;
 		Cursor c = getContentResolver().query(
-				DogMeInProvider.CONTENT_URI_OWNER, null, null, null, "DESC");
+				DogMeInProvider.CONTENT_URI_OWNER, null, null, null, null);
 		if (c == null || c.getCount() == 0) {
 			result = -1;
 		} else {
 			owner = new Owner();
+			c.moveToFirst();
 			owner.setOwnerID(c.getInt(0));
 			owner.setOwnerName(c.getString(1));
 			owner.setOwnerPassword(c.getString(2));
@@ -99,6 +100,7 @@ public class MainActivity extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						Intent i = new Intent(mContext, NewUserActivity.class);
+						//i.putExtra("ownerID", owner.getOwnerID());
 						startActivity(i);
 					}
 				});

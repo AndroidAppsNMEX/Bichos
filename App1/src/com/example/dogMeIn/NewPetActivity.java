@@ -21,29 +21,29 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.dogMeIn.R;
 import com.example.dogMeIn.models.Breed;
+import com.example.dogMeIn.models.Gender;
 import com.example.dogMeIn.models.Pet;
 
 public class NewPetActivity extends Activity {
 
 	private EditText textName;
 	private EditText textAge;
+	private EditText textNick;
 	private Spinner spinBreed;
 	private List<Breed> breedList;
 	private ArrayAdapter<Breed> breedSpAdapter;
 	private Button bSubmit;
+	private RadioButton rbMale;
+	private RadioGroup rgGender;
 	private final int METHOD_OPT_SUBMIT = 0;
 	private final int METHOD_OPT_BREED = 1;
 	private Context mContext;
-	private static final String SOAP_ACTION = "http://services.web.org/";
-	private static final String METHOD_NAME_SUBMIT = "newPet";
-	private static final String METHOD_NAME_BREED = "findAllBreeds";
-	private static final String NAMESPACE = "http://services.web.org/";
-	private static final String URL = "http://192.168.43.241:8080/DogMeIn/DogMeInWeb?wsdl";
 	private Thread webThread;
 	private Handler hBreedList;
 	private Handler hSubmit;
@@ -63,9 +63,15 @@ public class NewPetActivity extends Activity {
 
 		textName = (EditText) this.findViewById(R.id.newPetName);
 		textAge = (EditText) this.findViewById(R.id.newPetAge);
+		textNick = (EditText) this.findViewById(R.id.newPetNick);
 		spinBreed = (Spinner) this.findViewById(R.id.spBreed);
 		mContext = this.getApplicationContext();
 		bSubmit = (Button) this.findViewById(R.id.login);
+		rgGender = (RadioGroup) findViewById(R.id.rgGender);
+		rbMale = (RadioButton) findViewById(R.id.rbMale);
+		
+		rgGender.clearCheck();
+		rgGender.check(rbMale.getId());
 
 		bSubmit.setOnClickListener(new OnClickListener() {
 			public void onClick(View view) {
@@ -177,16 +183,16 @@ public class NewPetActivity extends Activity {
 
 		int result = 0;
 		try {
-			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_BREED);
+			SoapObject request = new SoapObject(ConnectionWS.NAMESPACE, ConnectionWS.METHOD_NAME_BREED);
 
 			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 					SoapEnvelope.VER11);
 			envelope.dotNet = false;
 			envelope.setOutputSoapObject(request);
 
-			HttpTransportSE transporte = new HttpTransportSE(URL);
+			HttpTransportSE transporte = new HttpTransportSE(ConnectionWS.URL);
 			// Llamada
-			transporte.call(SOAP_ACTION + METHOD_NAME_BREED, envelope);
+			transporte.call(ConnectionWS.SOAP_ACTION + ConnectionWS.METHOD_NAME_BREED, envelope);
 
 			// Resultado
 			SoapObject requestSOAP = (SoapObject) envelope.bodyIn;
@@ -207,8 +213,7 @@ public class NewPetActivity extends Activity {
 	private int submit() {
 		int result = 0;
 		try {
-			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME_SUBMIT);
-
+			SoapObject request = new SoapObject(ConnectionWS.NAMESPACE, ConnectionWS.METHOD_NAME_SUBMIT);
 			request.addProperty("breedID", pet.getBreedID());
 			request.addProperty("ownerID", pet.getOwnerID());
 			request.addProperty("petAge", pet.getPetAge());
@@ -219,18 +224,19 @@ public class NewPetActivity extends Activity {
 			request.addProperty("petNick", pet.getPetNick());
 			request.addProperty("petPathPhoto", pet.getPetPathPhoto());
 
-			SoapSerializationEnvelope sobre = new SoapSerializationEnvelope(
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
 					SoapEnvelope.VER11);
-			sobre.dotNet = false;
-			sobre.setOutputSoapObject(request);
+			envelope.dotNet = false;
+			envelope.setOutputSoapObject(request);
 
-			HttpTransportSE transporte = new HttpTransportSE(URL);
+			HttpTransportSE transporte = new HttpTransportSE(ConnectionWS.URL);
 			// Llamada
-			transporte.call(SOAP_ACTION + METHOD_NAME_SUBMIT, sobre);
+			transporte.call(ConnectionWS.SOAP_ACTION + ConnectionWS.METHOD_NAME_SUBMIT, envelope);
 
-			result = (Integer) sobre.getResponse();
+			result = Integer.parseInt(envelope.getResponse().toString());
 		} catch (Exception e) {
 			result = -1;
+			e.printStackTrace();
 		}
 		return result;
 	}
@@ -262,8 +268,14 @@ public class NewPetActivity extends Activity {
 				&& textAge.getText().toString() != "") {
 			p.setPetName(textName.getText().toString());
 			p.setPetAge(Integer.parseInt(textAge.getText().toString()));
+			p.setPetNick(textNick.getText().toString());
 			p.setOwnerID(ownerID);
 			p.setBreedID(((Breed) spinBreed.getSelectedItem()).getBreedID());
+			if(rbMale.isChecked()){
+				p.setPetGender(Gender.Male);
+			} else {
+				p.setPetGender(Gender.Female);
+			}
 		} else {
 			throw new RuntimeException("Missing required fields.");
 		}

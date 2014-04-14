@@ -102,19 +102,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
-            <RadioButton
-                android:id="@+id/rbFemale"
+            <RadioGroup
+                android:id="@+id/rgGender"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:text="@string/female" />
+                android:layout_marginLeft="12dp"
+                android:orientation="horizontal" >
 
-            <RadioButton
-                android:id="@+id/rbMale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/male" />
+                <RadioButton
+                    android:id="@+id/rbFemale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="14dp"
+                    android:text="@string/female" />
+
+                <RadioButton
+                    android:id="@+id/rbMale"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="@string/male" />
+            </RadioGroup>
+
         </TableRow>
     </TableLayout>
 
@@ -143,10 +152,11 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/textView2"
         android:layout_alignLeft="@+id/spBreed"
-        android:ems="10" android:inputType="text"/>
+        android:ems="10"
+        android:inputType="text" />
 
     <EditText
-        android:id="@+id/editText4"
+        android:id="@+id/newPetNick"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/newPetName"

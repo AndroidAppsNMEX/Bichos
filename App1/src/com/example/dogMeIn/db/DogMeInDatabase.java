@@ -57,7 +57,7 @@ public class DogMeInDatabase {
 		builder.setTables(OWNER_TABLE);
 		builder.setProjectionMap(columnMapOwner);
 		Cursor cursor = builder.query(mOpenHelper.getWritableDatabase(),
-				columns, selection, selectionArgs, null, null, COL_OWNER[0]);
+				columns, selection, selectionArgs, null, null, null);
 		//mOpenHelper.close();
 		return cursor;
 	}
